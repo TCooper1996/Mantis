@@ -14,5 +14,6 @@ namespace Mantis.Models
         public Severity Severity { get; set; }
         
         public Project Project { get; set; }
+        
     }
 }

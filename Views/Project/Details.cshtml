@@ -20,7 +20,7 @@
             @Html.DisplayNameFor(model => model.Priority)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Priority)
+            @Html.DisplayFor(model=> model.Priority)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DateStarted)
@@ -29,12 +29,50 @@
             @Html.DisplayFor(model => model.DateStarted)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DeadLine)
+            @Html.DisplayNameFor(model => model.Deadline)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DeadLine)
+            @Html.DisplayFor(model => model.Deadline)
+        </dd>
+        <dt class="col-sm-2">
+            Assignees
+        </dt>
+        <dd class = "col-sm-10">
+            @foreach (var m in Model.TeamMembers)
+            {
+                @Html.Encode($"{m.FirstName} {m.LastName}, ");
+            }
         </dd>
     </dl>
+    
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                Issue Number
+            </th>
+            <th>
+                Description
+            </th>
+        </tr>
+        </thead>
+            
+        <tbody>
+        @foreach (var issue in Model.Issues)
+        {
+            <tr>
+                <td>
+                    @issue.ID
+                </td>
+                
+                <td>
+                    @issue.Description
+                </td>
+                
+            </tr>
+        }
+        </tbody>
+    </table>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

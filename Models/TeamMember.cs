@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Mantis.Models
 {
@@ -18,7 +19,12 @@ namespace Mantis.Models
         public string LastName { get; set; }
         public Role Role { get; set; }
         
-        public Project? Project { get; set; }
-        
+        public Project Project { get; set; }
+
+        public string GetName => $"{LastName}, {FirstName}";
+        public string GetProject => Project.Title ?? "Unassigned";
+
+
+
     }
 }

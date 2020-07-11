@@ -32,8 +32,8 @@ namespace Mantis.Data
                    var projects = new Project[]
                    {
                    new Project{Title="Supply Chain Optimization", Priority = Priority.High, DateStarted=DateTime.Parse("2019-09-01"), TeamMembers = members.Take(2).ToList()},
-                   new Project{Title="FastMaths", Priority = Priority.Medium, DateStarted=DateTime.Parse("2019-04-06"), DeadLine = DateTime.Parse("2020-06-15"), TeamMembers = members.Skip(2).Take(2).ToList()},
-                   new Project{Title="Armadillo", Priority = Priority.Low, DateStarted=DateTime.Parse("2020-01-01"), DeadLine = DateTime.Parse("2021-09-15"), TeamMembers = members.Skip(4).Take(2).ToList()},
+                   new Project{Title="FastMaths", Priority = Priority.Medium, DateStarted=DateTime.Parse("2019-04-06"), Deadline = DateTime.Parse("2020-06-15"), TeamMembers = members.Skip(2).Take(2).ToList()},
+                   new Project{Title="Armadillo", Priority = Priority.Low, DateStarted=DateTime.Parse("2020-01-01"), Deadline = DateTime.Parse("2021-09-15"), TeamMembers = members.Skip(4).Take(2).ToList()},
                    };
 
                    var issues = new Issue[]
@@ -54,18 +54,16 @@ namespace Mantis.Data
                        members[i].Project = projects[i/2];
                    }
                    
-                   foreach (TeamMember s in members)
-                   {
-                       context.TeamMember.Add(s);
-                   }
 
                    //Add issues to projects and add issue and project models to db
                    for (int i = 0; i < 3; i++)
                    {
                        projects[i].Issues = new List<Issue>{issues[i]};
-                       context.Project.Add(projects[i]);
-                       context.Issue.Add(issues[i]);
                    }
+                   context.TeamMember.AddRange(members);
+                   context.Project.AddRange(projects);
+                   context.Issue.AddRange(issues);
+                   
                    context.SaveChanges();
        
                } 

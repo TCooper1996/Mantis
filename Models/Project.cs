@@ -17,13 +17,15 @@ namespace Mantis.Models
         public string Title { get; set; }
         public Priority Priority { get; set; }
         
+        [Display(Name = "Start Date")]
         [DataType(DataType.Date)]
         public DateTime DateStarted { get; set; }
         
         [DataType(DataType.Date)]
-        public  DateTime? DeadLine { get; set; }
+        public  DateTime? Deadline { get; set; }
         
         public List<TeamMember> TeamMembers{ get; set;}
         public List<Issue> Issues { get; set; }
+        
     }
 }

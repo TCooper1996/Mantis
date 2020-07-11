@@ -10,22 +10,24 @@ using Mantis.Models;
 
 namespace Mantis.Controllers
 {
-    public class ProjectController : Controller
+    public class TeamMemberController : Controller
     {
         private readonly Context _context;
 
-        public ProjectController(Context context)
+        public TeamMemberController(Context context)
         {
             _context = context;
         }
 
-        // GET: Project
+        // GET: TeamMember
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Project.ToListAsync());
+            return View(await _context.TeamMember
+                .Include(p => p.Project)
+                .ToListAsync());
         }
 
-        // GET: Project/Details/5
+        // GET: TeamMember/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,41 +35,40 @@ namespace Mantis.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
-                .Include(p => p.TeamMembers)
-                .Include(i => i.Issues)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            var teamMember = await _context.TeamMember
+                .Include(a => a.Project)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (teamMember == null)
             {
                 return NotFound();
             }
 
-            return View(project);
+            return View(teamMember);
         }
 
-        // GET: Project/Create
+        // GET: TeamMember/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Project/Create
+        // POST: TeamMember/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Priority,DateStarted,DeadLine")] Project project)
+        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Role")] TeamMember teamMember)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(project);
+                _context.Add(teamMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(project);
+            return View(teamMember);
         }
 
-        // GET: Project/Edit/5
+        // GET: TeamMember/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,22 +76,22 @@ namespace Mantis.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project.FindAsync(id);
-            if (project == null)
+            var teamMember = await _context.TeamMember.FindAsync(id);
+            if (teamMember == null)
             {
                 return NotFound();
             }
-            return View(project);
+            return View(teamMember);
         }
 
-        // POST: Project/Edit/5
+        // POST: TeamMember/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Priority,DateStarted,DeadLine")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Role")] TeamMember teamMember)
         {
-            if (id != project.Id)
+            if (id != teamMember.ID)
             {
                 return NotFound();
             }
@@ -99,12 +100,12 @@ namespace Mantis.Controllers
             {
                 try
                 {
-                    _context.Update(project);
+                    _context.Update(teamMember);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.Id))
+                    if (!TeamMemberExists(teamMember.ID))
                     {
                         return NotFound();
                     }
@@ -115,10 +116,10 @@ namespace Mantis.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(project);
+            return View(teamMember);
         }
 
-        // GET: Project/Delete/5
+        // GET: TeamMember/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -126,30 +127,30 @@ namespace Mantis.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            var teamMember = await _context.TeamMember
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (teamMember == null)
             {
                 return NotFound();
             }
 
-            return View(project);
+            return View(teamMember);
         }
 
-        // POST: Project/Delete/5
+        // POST: TeamMember/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = await _context.Project.FindAsync(id);
-            _context.Project.Remove(project);
+            var teamMember = await _context.TeamMember.FindAsync(id);
+            _context.TeamMember.Remove(teamMember);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private bool TeamMemberExists(int id)
         {
-            return _context.Project.Any(e => e.Id == id);
+            return _context.TeamMember.Any(e => e.ID == id);
         }
     }
 }

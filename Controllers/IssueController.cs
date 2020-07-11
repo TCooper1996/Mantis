@@ -10,22 +10,24 @@ using Mantis.Models;
 
 namespace Mantis.Controllers
 {
-    public class ProjectController : Controller
+    public class IssueController : Controller
     {
         private readonly Context _context;
 
-        public ProjectController(Context context)
+        public IssueController(Context context)
         {
             _context = context;
         }
 
-        // GET: Project
+        // GET: Issue
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Project.ToListAsync());
+            return View(await _context.Issue
+                .Include(p => p.Project)
+                .ToListAsync());
         }
 
-        // GET: Project/Details/5
+        // GET: Issue/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,41 +35,40 @@ namespace Mantis.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
-                .Include(p => p.TeamMembers)
-                .Include(i => i.Issues)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            var issue = await _context.Issue
+                .Include(p => p.Project)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (issue == null)
             {
                 return NotFound();
             }
 
-            return View(project);
+            return View(issue);
         }
 
-        // GET: Project/Create
+        // GET: Issue/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Project/Create
+        // POST: Issue/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Priority,DateStarted,DeadLine")] Project project)
+        public async Task<IActionResult> Create([Bind("ID,Description,Severity")] Issue issue)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(project);
+                _context.Add(issue);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(project);
+            return View(issue);
         }
 
-        // GET: Project/Edit/5
+        // GET: Issue/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,22 +76,22 @@ namespace Mantis.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project.FindAsync(id);
-            if (project == null)
+            var issue = await _context.Issue.FindAsync(id);
+            if (issue == null)
             {
                 return NotFound();
             }
-            return View(project);
+            return View(issue);
         }
 
-        // POST: Project/Edit/5
+        // POST: Issue/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Priority,DateStarted,DeadLine")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Description,Severity")] Issue issue)
         {
-            if (id != project.Id)
+            if (id != issue.ID)
             {
                 return NotFound();
             }
@@ -99,12 +100,12 @@ namespace Mantis.Controllers
             {
                 try
                 {
-                    _context.Update(project);
+                    _context.Update(issue);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectExists(project.Id))
+                    if (!IssueExists(issue.ID))
                     {
                         return NotFound();
                     }
@@ -115,10 +116,10 @@ namespace Mantis.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(project);
+            return View(issue);
         }
 
-        // GET: Project/Delete/5
+        // GET: Issue/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -126,30 +127,30 @@ namespace Mantis.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
+            var issue = await _context.Issue
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (issue == null)
             {
                 return NotFound();
             }
 
-            return View(project);
+            return View(issue);
         }
 
-        // POST: Project/Delete/5
+        // POST: Issue/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var project = await _context.Project.FindAsync(id);
-            _context.Project.Remove(project);
+            var issue = await _context.Issue.FindAsync(id);
+            _context.Issue.Remove(issue);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private bool IssueExists(int id)
         {
-            return _context.Project.Any(e => e.Id == id);
+            return _context.Issue.Any(e => e.ID == id);
         }
     }
 }
